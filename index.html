@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TODO Website</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Dark Theme Custom Styles */
+    body.dark-theme {
+      background-color: #1a1a1a;
+      color: #f5f5f5;
+    }
+
+    body.dark-theme .container {
+      background-color: #2d2d2d;
+      color: #f5f5f5;
+    }
+
+    body.dark-theme input,
+    body.dark-theme button {
+      background-color: #444;
+      color: #f5f5f5;
+      border-color: #555;
+    }
+
+    body.dark-theme .todo-item {
+      background-color: #444;
+      color: #f5f5f5;
+    }
+
+    body.dark-theme .todo-item:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="container mx-auto max-w-md p-6 mt-10 bg-white rounded-lg shadow-lg">
+    <!-- Signup Form -->
+    <div id="signup-section">
+      <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Sign Up</h1>
+      <input type="text" id="name" placeholder="Name" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="email" id="email" placeholder="Email" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="password" id="password" placeholder="Password" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="text" id="address" placeholder="Address" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="tel" id="mobile" placeholder="Mobile" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button onclick="signUp()" class="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Sign Up</button>
+      <p class="text-center mt-4">Already have an account? <a href="#" onclick="showSignIn()" class="text-blue-600 hover:underline">Sign In</a></p>
+    </div>
+
+    <!-- Signin Form -->
+    <div id="signin-section" class="hidden">
+      <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Sign In</h1>
+      <input type="email" id="signin-email" placeholder="Email" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <input type="password" id="signin-password" placeholder="Password" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button onclick="signIn()" class="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Sign In</button>
+      <p class="text-center mt-4">Don't have an account? <a href="#" onclick="showSignUp()" class="text-blue-600 hover:underline">Sign Up</a></p>
+    </div>
+
+    <!-- TODO List -->
+    <div id="todo-section" class="hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-blue-600">TODO List</h1>
+        <button onclick="logout()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">Logout</button>
+      </div>
+      <input type="text" id="todo-input" placeholder="Add a new task" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button onclick="addTodo()" class="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Add Task</button>
+      <div class="todo-list mt-6" id="todo-list"></div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle text-center mt-6">
+      <button onclick="toggleTheme()" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition duration-300">Toggle Theme</button>
+    </div>
+  </div>
+
+  <script>
+    // Load users and current user from localStorage
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+    // Show appropriate section based on current user
+    if (currentUser) {
+      showTodoSection();
+      renderTodos();
+    } else {
+      showSignIn();
+    }
+
+    // Show Sign Up Section
+    function showSignUp() {
+      document.getElementById('signup-section').classList.remove('hidden');
+      document.getElementById('signin-section').classList.add('hidden');
+      document.getElementById('todo-section').classList.add('hidden');
+    }
+
+    // Show Sign In Section
+    function showSignIn() {
+      document.getElementById('signup-section').classList.add('hidden');
+      document.getElementById('signin-section').classList.remove('hidden');
+      document.getElementById('todo-section').classList.add('hidden');
+    }
+
+    // Show TODO Section
+    function showTodoSection() {
+      document.getElementById('signup-section').classList.add('hidden');
+      document.getElementById('signin-section').classList.add('hidden');
+      document.getElementById('todo-section').classList.remove('hidden');
+    }
+
+    // Sign Up Function
+    function signUp() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const address = document.getElementById('address').value;
+      const mobile = document.getElementById('mobile').value;
+
+      if (name && email && password && address && mobile) {
+        const newUser = { name, email, password, address, mobile, todos: [] };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Sign Up Successful! Please Sign In.');
+        showSignIn();
+      } else {
+        alert('Please fill all fields.');
+      }
+    }
+
+    // Sign In Function
+    function signIn() {
+      const email = document.getElementById('signin-email').value;
+      const password = document.getElementById('signin-password').value;
+
+      const user = users.find(u => u.email === email && u.password === password);
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        showTodoSection();
+        renderTodos();
+      } else {
+        alert('Invalid Email or Password.');
+      }
+    }
+
+    // Add TODO Function
+    function addTodo() {
+      const todoInput = document.getElementById('todo-input').value;
+      if (todoInput) {
+        currentUser.todos.push(todoInput);
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        renderTodos();
+        document.getElementById('todo-input').value = '';
+      }
+    }
+
+    // Render TODOs
+    function renderTodos() {
+      const todoList = document.getElementById('todo-list');
+      todoList.innerHTML = '';
+      currentUser.todos.forEach((todo, index) => {
+        const todoItem = document.createElement('div');
+        todoItem.className = 'todo-item flex justify-between items-center p-3 mb-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-300';
+        todoItem.innerHTML = `
+          <span class="flex-1">${todo}</span>
+          <button onclick="deleteTodo(${index})" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">Delete</button>
+        `;
+        todoList.appendChild(todoItem);
+      });
+    }
+
+    // Delete TODO Function
+    function deleteTodo(index) {
+      currentUser.todos.splice(index, 1);
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      renderTodos();
+    }
+
+    // Logout Function
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      showSignIn();
+    }
+
+    // Toggle Theme Function
+    function toggleTheme() {
+      const body = document.body;
+      if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        body.classList.add('bg-gray-100', 'text-gray-800');
+      } else {
+        body.classList.remove('bg-gray-100', 'text-gray-800');
+        body.classList.add('dark-theme');
+      }
+    }
+  </script>
+</body>
+</html>
