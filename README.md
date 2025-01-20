@@ -3,6 +3,7 @@
 A simple yet powerful TODO website built with **HTML**, **Tailwind CSS**, and **JavaScript**. This project allows users to sign up, sign in, manage their TODO list, and toggle between light and dark themes. All data is stored locally using `localStorage`.
 
 <a href="https://imgur.com/iIFcM1d"><img src="https://i.imgur.com/iIFcM1d.png" title="source: imgur.com" /></a>
+<a href="https://imgur.com/Sl87qfF"><img src="https://i.imgur.com/Sl87qfF.png" title="source: imgur.com" /></a>
 
 ---
 
